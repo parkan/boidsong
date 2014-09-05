@@ -1,10 +1,14 @@
 (ns boids.boid
-  (:use boids.spatial-vector))
+  (:use boids.spatial-vector
+    overtone.live
+    overtone.studio.scope))
 
-(defstruct boid :location :velocity)
+(defstruct boid :location :velocity :synth)
 
 (defn new-boid [x y vx vy]
-  (struct boid (struct spatial-vector x y) (struct spatial-vector vx vy)))
+  (struct boid (struct spatial-vector x y)
+          (struct spatial-vector vx vy)
+          (saw (+ (rand 10) 440)))
 
 (defn absolute-distance-between-boids [boid-1 boid-2]
   (distance-between (:location boid-1) (:location boid-2)))

@@ -26,26 +26,26 @@
   (loop []
     (. (:panel @boid-space-agent) (repaint))
     (. Thread (sleep 50))
-    (if (not (:stopped @boid-space-agent)) 
+    (if (not (:stopped @boid-space-agent))
       (recur)
       boid-space-agent)))
 
 (defn- start [boid-space-agent]
-  {:panel (:panel boid-space-agent), 
-   :frame (:frame boid-space-agent), 
+  {:panel (:panel boid-space-agent),
+   :frame (:frame boid-space-agent),
    :stopped false})
 
 (defn- stop [boid-space-agent]
-  {:panel (:panel boid-space-agent), 
-   :frame (:frame boid-space-agent), 
+  {:panel (:panel boid-space-agent),
+   :frame (:frame boid-space-agent),
    :stopped true})
 
 (defn init-flock []
   (let [d (new Dimension
-	       (- (:xmax drawable-bounds) (:xmin drawable-bounds)) 
+	       (- (:xmax drawable-bounds) (:xmin drawable-bounds))
 	       (- (:ymax drawable-bounds) (:ymin drawable-bounds)))
-	boids-a (atom (random-boids 50 drawable-bounds 10.0))
-	p (doto (proxy [JPanel] [] 
+	boids-a (atom (random-boids 5 drawable-bounds 10.0))
+	p (doto (proxy [JPanel] []
 		  (paint [g] (render-boids-and-move boids-a {:x 100 :y 300} g)))
 	    (.setPreferredSize d))
 	f (doto (new JFrame) (.add p) .pack .show)]
@@ -55,7 +55,7 @@
   (send @boid-space-agent start)
   (send boid-space-agent animate-flock))
 
-(defn stop-flock [boid-space-agent] 
+(defn stop-flock [boid-space-agent]
   (send @boid-space-agent stop))
 
 (defn kill-flock [boid-space-agent]
