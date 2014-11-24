@@ -5,10 +5,13 @@
 
 (defstruct boid :location :velocity :synth)
 
+(defstruct voice :inst)
+(definst boidsong [freq 440] (saw (+ (rand 10) freq)))
+
 (defn new-boid [x y vx vy]
   (struct boid (struct spatial-vector x y)
           (struct spatial-vector vx vy)
-          (saw (+ (rand 10) 440)))
+          (struct voice (boidsong (Math/abs x)))))
 
 (defn absolute-distance-between-boids [boid-1 boid-2]
   (distance-between (:location boid-1) (:location boid-2)))

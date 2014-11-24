@@ -44,7 +44,7 @@
   (let [d (new Dimension
 	       (- (:xmax drawable-bounds) (:xmin drawable-bounds))
 	       (- (:ymax drawable-bounds) (:ymin drawable-bounds)))
-	boids-a (atom (random-boids 5 drawable-bounds 10.0))
+	boids-a (atom (random-boids 16 drawable-bounds 10.0))
 	p (doto (proxy [JPanel] []
 		  (paint [g] (render-boids-and-move boids-a {:x 100 :y 300} g)))
 	    (.setPreferredSize d))
