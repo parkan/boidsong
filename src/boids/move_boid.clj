@@ -8,10 +8,11 @@
 (defn move-boid-one-step [the-boid all-boids the-bounds the-goal]
      (let [adjustment (total-adjustment the-boid all-boids the-bounds the-goal)
       new-location (sv-sum (:location the-boid) adjustment)
+      new-freq (:x new-location)
+      new-vol (/ (Math/abs (:y new-location)) (:ymax the-bounds))
       ]
-       ; update synth params here
        ;(print (:location the-boid))
-       (ctl (:inst (:synth the-boid)) :freq (:x new-location))
+       (ctl (:inst (:synth the-boid)) :freq new-freq :vol new-vol)
        (struct boid new-location adjustment (:synth the-boid))))
 
 (defn move-all-boids-one-step [boid-list the-bounds the-goal]
