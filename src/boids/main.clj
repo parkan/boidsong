@@ -11,19 +11,19 @@
 
 (def drawable-bounds (struct bounds -500 500 -350 350))
 
-(defn- render-boids-and-move [boids-a the-goal g]
+(defn- move-boids [boids-a the-goal]
      (binding [*velocity-weight* 0.125
 	       *bounds-radius* 20
 	       *bounds-weight* 0.8
 	       *avoidance-radius* 30.0
 	       *center-of-mass-weight* 0.001
 	       *avoidance-weight* 0.1
-	       *goal-weight* 0.001]
-       (render-boids drawable-bounds boids-a g)
+	       *goal-weight* 0.000]
        (swap! boids-a move-all-boids-one-step drawable-bounds the-goal)))
 
 (defn- animate-flock [boid-space-agent]
   (loop []
+    (move-boids (:boids-a @boid-space-agent) {:x 100 :y 300})
     (. (:panel @boid-space-agent) (repaint))
     (. Thread (sleep 50))
     (if (not (:stopped @boid-space-agent))
@@ -31,12 +31,14 @@
       boid-space-agent)))
 
 (defn- start [boid-space-agent]
-  {:panel (:panel boid-space-agent),
+  {:boids-a (:boids-a boid-space-agent),
+   :panel (:panel boid-space-agent),
    :frame (:frame boid-space-agent),
    :stopped false})
 
 (defn- stop [boid-space-agent]
-  {:panel (:panel boid-space-agent),
+  {:boids-a (:boids-a boid-space-agent),
+   :panel (:panel boid-space-agent),
    :frame (:frame boid-space-agent),
    :stopped true})
 
@@ -46,10 +48,11 @@
 	       (- (:ymax drawable-bounds) (:ymin drawable-bounds)))
 	boids-a (atom (random-boids 16 drawable-bounds 10.0))
 	p (doto (proxy [JPanel] []
-		  (paint [g] (render-boids-and-move boids-a {:x 100 :y 300} g)))
+		  (paint [g] (render-boids drawable-bounds boids-a g)))
 	    (.setPreferredSize d))
-	f (doto (new JFrame) (.add p) .pack .show)]
-    (agent (agent {:panel p, :frame f, :stopped true}))))
+	f (doto (new JFrame) (.add p) .pack .show)
+  the-goal {:x 100 :y 300} ]
+    (agent (agent {:boids-a boids-a :panel p, :frame f, :goal the-goal :stopped true}))))
 
 (defn start-flock [boid-space-agent]
   (send @boid-space-agent start)
